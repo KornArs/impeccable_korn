@@ -1,259 +1,436 @@
-# Impeccable
+# Impeccable Korn
 
-The vocabulary you didn't know you needed. 1 skill, 23 commands, and curated anti-patterns for impeccable frontend design.
+Личная адаптация проекта **Impeccable** для работы с AI-агентами, в первую очередь с **Codex CLI** через механизм **Agent Skills**.
 
-> **Quick start:** Visit [impeccable.style](https://impeccable.style) to download ready-to-use bundles.
+Impeccable помогает AI-агенту проектировать, проверять и улучшать frontend-интерфейсы не по шаблону, а с опорой на дизайн-систему, UX-логику, типографику, цвет, адаптивность, состояния интерфейса и список запрещённых AI-антипаттернов.
 
-## Why Impeccable?
+> Важно: этот репозиторий основан на оригинальном проекте [Paul Bakaus / Impeccable](https://github.com/pbakaus/impeccable). Лицензия Apache 2.0 сохранена. Эта версия используется как личная рабочая адаптация под мои проекты и дальнейшие доработки.
 
-Anthropic created [frontend-design](https://github.com/anthropics/skills/tree/main/skills/frontend-design), a skill that guides Claude toward better UI design. Impeccable builds on that foundation with deeper expertise and more control.
+## Зачем нужен Impeccable
 
-Every LLM learned from the same generic templates. Without guidance, you get the same predictable mistakes: Inter font, purple gradients, cards nested in cards, gray text on colored backgrounds.
+Большинство LLM-моделей обучались на похожих frontend-примерах. Поэтому без дополнительных правил они часто создают одинаковые интерфейсы:
 
-Impeccable fights that bias with:
-- **An expanded skill** with 7 domain-specific reference files ([view source](source/skills/impeccable/))
-- **23 commands** to audit, review, polish, distill, animate, and more
-- **Curated anti-patterns** that explicitly tell the AI what NOT to do
+- шрифт Inter или системный sans-serif по умолчанию;
+- фиолетовые и синие градиенты;
+- карточки внутри карточек;
+- серый текст на цветном фоне;
+- одинаковые сетки с иконкой, заголовком и текстом;
+- тёмный SaaS-интерфейс без реальной причины;
+- декоративные эффекты, которые выглядят как типичный AI-output.
 
-## What's Included
+Impeccable снижает этот риск за счёт:
 
-### The Skill: impeccable
+- одного расширенного skill `impeccable`;
+- 23 команд для аудита, полировки, адаптации, типографики, анимации, UX-copy и других задач;
+- reference-файлов по ключевым направлениям frontend-дизайна;
+- CLI-детектора UI-антипаттернов;
+- поддержки нескольких AI-харнесов: Codex, Cursor, Claude Code, Gemini CLI, GitHub Copilot и других.
 
-A comprehensive design skill with 7 domain-specific references ([view skill](source/skills/impeccable/SKILL.md)):
+## Главный сценарий этого форка
 
-| Reference | Covers |
-|-----------|--------|
-| [typography](source/skills/impeccable/reference/typography.md) | Type systems, font pairing, modular scales, OpenType |
-| [color-and-contrast](source/skills/impeccable/reference/color-and-contrast.md) | OKLCH, tinted neutrals, dark mode, accessibility |
-| [spatial-design](source/skills/impeccable/reference/spatial-design.md) | Spacing systems, grids, visual hierarchy |
-| [motion-design](source/skills/impeccable/reference/motion-design.md) | Easing curves, staggering, reduced motion |
-| [interaction-design](source/skills/impeccable/reference/interaction-design.md) | Forms, focus states, loading patterns |
-| [responsive-design](source/skills/impeccable/reference/responsive-design.md) | Mobile-first, fluid design, container queries |
-| [ux-writing](source/skills/impeccable/reference/ux-writing.md) | Button labels, error messages, empty states |
+Эта версия в первую очередь предназначена для личного использования в **Codex CLI**.
 
-### 23 Commands
+Правильный путь для Codex:
 
-All commands are accessed through `/impeccable`:
-
-| Command | What it does |
-|---------|--------------|
-| `/impeccable craft` | Full shape-then-build flow with visual iteration |
-| `/impeccable teach` | One-time setup: gather design context, write PRODUCT.md and DESIGN.md |
-| `/impeccable document` | Generate DESIGN.md from existing project code |
-| `/impeccable extract` | Pull reusable components and tokens into the design system |
-| `/impeccable shape` | Plan UX/UI before writing code |
-| `/impeccable critique` | UX design review: hierarchy, clarity, emotional resonance |
-| `/impeccable audit` | Run technical quality checks (a11y, performance, responsive) |
-| `/impeccable polish` | Final pass, design system alignment, and shipping readiness |
-| `/impeccable bolder` | Amplify boring designs |
-| `/impeccable quieter` | Tone down overly bold designs |
-| `/impeccable distill` | Strip to essence |
-| `/impeccable harden` | Error handling, i18n, text overflow, edge cases |
-| `/impeccable onboard` | First-run flows, empty states, activation paths |
-| `/impeccable animate` | Add purposeful motion |
-| `/impeccable colorize` | Introduce strategic color |
-| `/impeccable typeset` | Fix font choices, hierarchy, sizing |
-| `/impeccable layout` | Fix layout, spacing, visual rhythm |
-| `/impeccable delight` | Add moments of joy |
-| `/impeccable overdrive` | Add technically extraordinary effects |
-| `/impeccable clarify` | Improve unclear UX copy |
-| `/impeccable adapt` | Adapt for different devices |
-| `/impeccable optimize` | Performance improvements |
-| `/impeccable live` | Visual variant mode: iterate on elements in the browser |
-
-Use `/impeccable pin <command>` to create standalone shortcuts (e.g., `pin audit` creates `/audit`).
-
-#### Usage Examples
-
-```
-/impeccable audit blog           # Audit blog hub + post pages
-/impeccable critique landing     # UX design review
-/impeccable polish settings      # Final pass before shipping
-/impeccable harden checkout      # Add error handling + edge cases
+```text
+.agents/skills/impeccable/
 ```
 
-Or use `/impeccable` directly with a description:
+Не основной путь для Codex:
+
+```text
+.codex/skills/
 ```
-/impeccable redo this hero section
+
+Папка `.codex` может присутствовать как legacy-выход сборки, но для обычной работы с Codex следует использовать именно `.agents`.
+
+## Что входит в проект
+
+### Skill `impeccable`
+
+Основной skill расположен здесь:
+
+```text
+source/skills/impeccable/SKILL.md
 ```
 
-### Anti-Patterns
+Он используется, когда нужно:
 
-The skill includes explicit guidance on what to avoid:
+- спроектировать интерфейс;
+- сделать редизайн;
+- провести UX/UI-аудит;
+- улучшить визуальную иерархию;
+- проверить accessibility;
+- усилить адаптивность;
+- улучшить UX-copy;
+- убрать AI-шаблонность;
+- подготовить интерфейс к production;
+- выстроить дизайн-систему.
 
-- Don't use overused fonts (Arial, Inter, system defaults)
-- Don't use gray text on colored backgrounds
-- Don't use pure black/gray (always tint)
-- Don't wrap everything in cards or nest cards inside cards
-- Don't use bounce/elastic easing (feels dated)
+### Reference-файлы
 
-## See It In Action
+Внутри skill есть справочные материалы:
 
-Visit [impeccable.style](https://impeccable.style#casestudies) to see before/after case studies of real projects transformed with Impeccable commands.
+| Файл | Что покрывает |
+|---|---|
+| `typography.md` | Типографика, иерархия, font pairing, размеры, OpenType |
+| `color-and-contrast.md` | Цвет, OKLCH, контраст, тёмная тема, accessibility |
+| `spatial-design.md` | Отступы, сетки, визуальный ритм, композиция |
+| `motion-design.md` | Анимации, easing, stagger, reduced motion |
+| `interaction-design.md` | Формы, focus states, loading states, взаимодействие |
+| `responsive-design.md` | Mobile-first, fluid layout, container queries |
+| `ux-writing.md` | Кнопки, ошибки, пустые состояния, микротексты |
 
-## Installation
+## Команды Impeccable
 
-### Option 1: Download from Website (Recommended)
+Все команды логически доступны через `impeccable`.
 
-Visit [impeccable.style](https://impeccable.style), download the ZIP for your tool, and extract to your project.
+| Команда | Назначение |
+|---|---|
+| `impeccable craft` | Полный цикл: сначала UX/UI-форма задачи, потом реализация |
+| `impeccable teach` | Первичная настройка контекста проекта, создание `PRODUCT.md` и `DESIGN.md` |
+| `impeccable document` | Генерация `DESIGN.md` на основе существующего кода |
+| `impeccable extract` | Извлечение повторяемых компонентов и токенов в дизайн-систему |
+| `impeccable shape` | Планирование UX/UI до написания кода |
+| `impeccable critique` | UX-критика: иерархия, ясность, эмоциональный эффект |
+| `impeccable audit` | Технический аудит: accessibility, performance, responsive, anti-patterns |
+| `impeccable polish` | Финальная полировка перед релизом |
+| `impeccable bolder` | Сделать скучный дизайн смелее и выразительнее |
+| `impeccable quieter` | Успокоить слишком агрессивный или перегруженный дизайн |
+| `impeccable distill` | Упростить интерфейс до сути |
+| `impeccable harden` | Production-ready: ошибки, i18n, переполнение текста, edge cases |
+| `impeccable onboard` | Онбординг, first-run flow, пустые состояния |
+| `impeccable animate` | Осмысленная анимация и micro-interactions |
+| `impeccable colorize` | Стратегическое добавление цвета |
+| `impeccable typeset` | Исправление типографики |
+| `impeccable layout` | Исправление layout, spacing и визуального ритма |
+| `impeccable delight` | Добавление деталей, которые делают интерфейс приятнее |
+| `impeccable overdrive` | Более сложные и эффектные визуальные решения |
+| `impeccable clarify` | Улучшение UX-copy, label-ов и сообщений об ошибках |
+| `impeccable adapt` | Адаптация под устройства и экраны |
+| `impeccable optimize` | Оптимизация UI-производительности |
+| `impeccable live` | Визуальная итерация элементов в браузере |
 
-### Option 2: Copy from Repository
+## Использование в Codex
 
-**Cursor:**
+В Codex надёжнее обращаться к skill явно, а не рассчитывать на slash-команды.
+
+Примеры рабочих запросов:
+
+```text
+Используй skill impeccable. Проведи audit текущего интерфейса.
+```
+
+```text
+Используй skill impeccable. Сделай polish экрана карточки клиента, не меняя бизнес-логику.
+```
+
+```text
+Используй skill impeccable. Проверь Telegram Mini App на визуальную иерархию, адаптивность, UX-copy и AI-шаблонность.
+```
+
+```text
+Используй skill impeccable. Улучши CRM-интерфейс: отступы, карточки, состояния загрузки, ошибки, empty states, mobile.
+```
+
+```text
+Используй skill impeccable. Проверь интерфейс на типичные AI-антипаттерны и предложи план исправлений перед изменением кода.
+```
+
+## Установка для Codex
+
+### 1. Собрать проект
+
 ```bash
-cp -r dist/cursor/.cursor your-project/
+bun install
+bun run build
 ```
 
-> **Note:** Cursor skills require setup:
-> 1. Switch to Nightly channel in Cursor Settings → Beta
-> 2. Enable Agent Skills in Cursor Settings → Rules
->
-> [Learn more about Cursor skills](https://cursor.com/docs/context/skills)
+### 2. Установить skill локально в конкретный проект
 
-**Claude Code:**
 ```bash
-# Project-specific
-cp -r dist/claude-code/.claude your-project/
-
-# Or global (applies to all projects)
-cp -r dist/claude-code/.claude/* ~/.claude/
+cp -r dist/agents/.agents /path/to/your-project/
 ```
 
-**OpenCode:**
-```bash
-cp -r dist/opencode/.opencode your-project/
+После этого структура проекта должна быть такой:
+
+```text
+your-project/
+└─ .agents/
+   └─ skills/
+      └─ impeccable/
+         ├─ SKILL.md
+         ├─ reference/
+         ├─ scripts/
+         └─ agents/
+            └─ openai.yaml
 ```
 
-**Pi:**
+### 3. Установить skill глобально для пользователя
+
 ```bash
-cp -r dist/pi/.pi your-project/
-```
-
-**Gemini CLI:**
-```bash
-cp -r dist/gemini/.gemini your-project/
-```
-
-> **Note:** Gemini CLI skills require setup:
-> 1. Install preview version: `npm i -g @google/gemini-cli@preview`
-> 2. Run `/settings` and enable "Skills"
-> 3. Run `/skills list` to verify installation
->
-> [Learn more about Gemini CLI skills](https://geminicli.com/docs/cli/skills/)
-
-**Codex CLI:**
-```bash
-# Project-local
-cp -r dist/agents/.agents your-project/
-
-# Or user-wide
 mkdir -p ~/.agents/skills
 cp -r dist/agents/.agents/skills/* ~/.agents/skills/
 ```
 
-**GitHub Copilot:**
-```bash
-cp -r dist/github/.github your-project/
+Локальная установка удобнее для тестов на одном проекте. Глобальная установка удобнее, если skill нужен во всех проектах.
+
+## Рекомендуемый личный workflow
+
+### Шаг 1. Подготовить проект
+
+В проекте, где будет использоваться skill, желательно иметь:
+
+```text
+PRODUCT.md
+DESIGN.md
 ```
 
-**Trae:**
-```bash
-# Trae China (domestic version)
-cp -r dist/trae/.trae-cn/skills/* ~/.trae-cn/skills/
+`PRODUCT.md` отвечает за продуктовый контекст:
 
-# Trae International
-cp -r dist/trae/.trae/skills/* ~/.trae/skills/
+- кто пользователь;
+- какая задача продукта;
+- какой тон коммуникации;
+- какие ограничения;
+- какой визуальный и эмоциональный эффект нужен.
+
+`DESIGN.md` отвечает за визуальную систему:
+
+- цвета;
+- типографику;
+- компоненты;
+- spacing;
+- radii;
+- состояния;
+- правила адаптивности.
+
+### Шаг 2. Попросить Codex провести аудит
+
+```text
+Используй skill impeccable. Проведи audit проекта. Сначала дай список проблем по приоритету P0, P1, P2, затем предложи план исправлений. Код пока не меняй.
 ```
 
-> **Note:** Trae has two versions with different config directories:
-> - **Trae China**: `~/.trae-cn/skills/`
-> - **Trae International**: `~/.trae/skills/`
->
-> After copying, restart Trae IDE to activate the skills.
+### Шаг 3. После плана разрешить изменения
 
-**Rovo Dev:**
-```bash
-# Project-specific
-cp -r dist/rovo-dev/.rovodev your-project/
-
-# Or global (applies to all projects)
-cp -r dist/rovo-dev/.rovodev/skills/* ~/.rovodev/skills/
+```text
+Теперь внеси исправления из P0 и P1. Не меняй бизнес-логику, API, структуру данных и названия существующих переменных без необходимости.
 ```
 
-**Qoder:**
-```bash
-# Project-specific
-cp -r dist/qoder/.qoder your-project/
+### Шаг 4. Финальная полировка
 
-# Or global (applies to all projects)
-cp -r dist/qoder/.qoder/skills/* ~/.qoder/skills/
+```text
+Используй skill impeccable. Сделай polish изменённых экранов: проверь отступы, типографику, mobile, empty states, loading states и ошибки.
 ```
 
-## Usage
+## CLI-детектор антипаттернов
 
-Once installed, use commands in your AI harness:
-
-```
-/audit           # Find issues
-/normalize       # Fix inconsistencies
-/polish          # Final cleanup
-/distill         # Remove complexity
-```
-
-Most commands accept an optional argument to focus on a specific area:
-
-```
-/audit header
-/polish checkout-form
-```
-
-**Note:** Codex uses skills here, not `/prompts:` commands. Open `/skills` or type `$impeccable`. Repo-local installs live in `.agents/skills/`; user-wide installs live in `~/.agents/skills/`. GitHub Copilot uses `.github/skills/`. Restart the tool if a newly installed skill does not appear.
-
-## CLI
-
-Impeccable includes a standalone CLI for detecting anti-patterns without an AI harness:
+Проект содержит отдельный CLI для поиска UI-антипаттернов без AI-харнеса.
 
 ```bash
-npx impeccable detect src/                   # scan a directory
-npx impeccable detect index.html             # scan an HTML file
-npx impeccable detect https://example.com    # scan a URL (Puppeteer)
-npx impeccable detect --fast --json .        # regex-only, JSON output
+npx impeccable detect src/
+npx impeccable detect index.html
+npx impeccable detect https://example.com
+npx impeccable detect --fast --json .
 ```
 
-The detector catches 24 issues across AI slop (side-tab borders, purple gradients, bounce easing, dark glows) and general design quality (line length, cramped padding, small touch targets, skipped headings, and more).
+Детектор ищет проблемы двух типов:
 
-## Supported Tools
+1. **AI slop**: признаки шаблонного AI-интерфейса.
+2. **Design quality**: реальные проблемы качества интерфейса.
 
-- [Cursor](https://cursor.com)
-- [Claude Code](https://claude.ai/code)
-- [OpenCode](https://opencode.ai)
-- [Pi](https://pi.dev)
-- [Gemini CLI](https://github.com/google-gemini/gemini-cli)
-- [Codex CLI](https://github.com/openai/codex)
-- [VS Code Copilot](https://code.visualstudio.com)
-- [Kiro](https://kiro.dev)
-- [Trae](https://trae.ai)
-- [Rovo Dev](https://www.atlassian.com/software/rovo)
-- [Qoder](https://qoder.com)
+Примеры проверок:
 
-## Community & Ecosystem
+- side-tab borders;
+- purple gradients;
+- gradient text;
+- dark glow;
+- nested cards;
+- overused fonts;
+- low contrast;
+- cramped padding;
+- skipped headings;
+- tiny text;
+- layout property animation.
 
-Join the community and ecosystem conversations:
+## Важные ограничения текущей версии
 
-- GitHub Discussions: file bugs, request features, and help newcomers.
-- [Impeccable on npm](https://www.npmjs.com/package/impeccable): grab the CLI, follow releases, and star the package.
-- Follow @pbakaus on Twitter for release notes, sample lint reports, and video highlights of new rules.
+### 1. Это личный форк, а не полностью переименованный продукт
 
-## Contributing
+Внутри проекта часть metadata, package-информации, install/update-логики и внешних ссылок всё ещё может указывать на оригинальный Impeccable.
 
-See [DEVELOP.md](DEVELOP.md) for contributor guidelines and build instructions.
+Для личного использования это не критично.
 
-## License
+Для публичного продукта нужно отдельно:
 
-Apache 2.0. See [LICENSE](LICENSE).
+- переименовать package;
+- заменить repository URL;
+- заменить install/update upstream;
+- убрать зависимость от `impeccable.style`;
+- обновить npm/package metadata;
+- проверить license/notice attribution.
 
-The impeccable skill builds on [Anthropic's original frontend-design skill](https://github.com/anthropics/skills/tree/main/skills/frontend-design). See [NOTICE.md](NOTICE.md) for attribution.
+### 2. Для Codex использовать `.agents`, а не `.codex`
 
----
+`.codex` может присутствовать как legacy-формат. Основной рабочий путь для Codex:
 
-Created by [Paul Bakaus](https://www.paulbakaus.com)
+```text
+.agents/skills/
+```
+
+### 3. Осторожно с pin-командами
+
+Команда `pin` может быть удобной для создания коротких shortcut-команд, но для Codex на текущем этапе безопаснее не использовать её как основной механизм.
+
+Лучше обращаться к skill явно:
+
+```text
+Используй skill impeccable. Выполни audit.
+```
+
+## План личной доработки Korn-версии
+
+### Этап 1. Стабилизировать Codex-сценарий
+
+- Проверить сборку `bun run build`.
+- Проверить наличие `dist/agents/.agents/skills/impeccable`.
+- Установить skill в тестовый проект.
+- Убедиться, что Codex видит skill.
+- Проверить команды `audit`, `polish`, `harden`, `clarify` на реальном интерфейсе.
+
+### Этап 2. Добавить личный бизнес-контекст
+
+Планируемые reference-файлы:
+
+```text
+source/skills/impeccable/reference/korn-context.md
+source/skills/impeccable/reference/premium-real-estate.md
+source/skills/impeccable/reference/telegram-mini-app.md
+source/skills/impeccable/reference/ai-crm.md
+source/skills/impeccable/reference/russian-ux-copy.md
+source/skills/impeccable/reference/sales-psychology-ui.md
+```
+
+Их задача: адаптировать Impeccable под реальные проекты:
+
+- премиальная недвижимость;
+- AI CRM для риелторов;
+- Telegram Mini App;
+- WebApp-интерфейсы;
+- доверие, безопасность, статус;
+- русскоязычный UX-copy;
+- психология клиента и продаж.
+
+### Этап 3. Усилить тесты под Codex
+
+Желательно добавить тесты, которые проверяют:
+
+- генерацию `.agents/skills/impeccable/SKILL.md`;
+- наличие `agents/openai.yaml`;
+- отсутствие незаменённых placeholders;
+- копирование `reference/` и `scripts/`;
+- корректность Codex-инструкций.
+
+### Этап 4. Только потом думать о публичной версии
+
+Публичная версия имеет смысл только после того, как личная версия стабильно работает в реальных проектах.
+
+## Поддерживаемые инструменты
+
+Проект умеет собирать skill под разные AI-харнесы:
+
+- Codex CLI;
+- Cursor;
+- Claude Code;
+- Gemini CLI;
+- GitHub Copilot;
+- OpenCode;
+- Kiro;
+- Pi;
+- Qoder;
+- Trae;
+- Rovo Dev.
+
+Для моего рабочего сценария основной инструмент: **Codex CLI**.
+
+## Структура проекта
+
+```text
+source/                          исходники skill
+  skills/impeccable/
+    SKILL.md                      главный skill
+    reference/                    справочные материалы
+    scripts/                      служебные скрипты skill
+
+scripts/                         сборка и трансформация
+  build.js                        основной build pipeline
+  lib/transformers/               provider-конфиги и фабрика
+
+src/                             runtime-код CLI-детектора
+  detect-antipatterns.mjs         основной anti-pattern detector
+
+bin/                             CLI-вход
+  cli.js
+  commands/skills.mjs
+
+tests/                           тесты
+public/                          сайт и демо-страницы
+server/                          локальный dev/API server
+dist/                            сгенерированные выходы под разные инструменты
+build/                           сборка сайта
+```
+
+## Разработка
+
+Установка зависимостей:
+
+```bash
+bun install
+```
+
+Сборка:
+
+```bash
+bun run build
+```
+
+Полная пересборка:
+
+```bash
+bun run rebuild
+```
+
+Тесты:
+
+```bash
+bun run test
+```
+
+Локальный dev-сервер:
+
+```bash
+bun run dev
+```
+
+## Что не стоит делать без необходимости
+
+- Не редактировать вручную файлы в `dist/`, если изменение должно жить постоянно.
+- Не начинать с полного переименования всего проекта, если цель только личное использование.
+- Не использовать `.codex` как основной путь для Codex.
+- Не делать публичный npm-пакет до очистки metadata и install/update-логики.
+- Не менять `src/detect-antipatterns.mjs` без тестов, потому что он используется CLI, browser-версией, extension и сайтом.
+
+## Лицензия и атрибуция
+
+Лицензия: Apache 2.0. См. [LICENSE](LICENSE).
+
+Проект основан на оригинальном Impeccable от Paul Bakaus и использует идеи Anthropic `frontend-design` skill. См. [NOTICE.md](NOTICE.md) для атрибуции.
+
+Оригинальный проект:
+
+- GitHub: https://github.com/pbakaus/impeccable
+- Сайт: https://impeccable.style
+
+Эта версия:
+
+- GitHub: https://github.com/KornArs/impeccable_korn
+- Основной сценарий: личное использование и доработка под Codex CLI.
